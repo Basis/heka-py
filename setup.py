@@ -9,6 +9,13 @@ with open(os.path.join(HERE, 'README.rst')) as f:
     README = f.read()
 
 
+if 2 < sys.version_info.major:
+    # Google protobuf doesn't support Python 3 outside beta:
+    protobuf_library = 'protobuf==3.0.0b3'
+else:
+    protobuf_library = 'protobuf'
+
+
 class PyTest(TestCommand):
     user_options = [('pytest-args=', 'a', "Arguments to pass to py.test")]
 
@@ -45,7 +52,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'protobuf',
+        protobuf_library,
     ],
     tests_require=[
         'mock',

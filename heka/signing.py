@@ -1,5 +1,6 @@
 import hmac
 import hashlib
+import sys
 from collections import namedtuple
 
 from .message_pb2 import Header
@@ -8,10 +9,16 @@ from .message_pb2 import Header
 SignerConfig = namedtuple('Signer', ('name', 'version', 'key', 'hash'))
 
 
-HASH_NAME_TO_VALUE = {
-    'sha1': Header.SHA1,
-    'md5': Header.MD5,
-}
+if 2 < sys.version_info.major:
+    HASH_NAME_TO_VALUE = {
+        'sha1': Header.DESCRIPTOR.enum_values_by_name['SHA1'],
+        'md5': Header.DESCRIPTOR.enum_values_by_name['MD5'],
+    }
+else:
+    HASH_NAME_TO_VALUE = {
+        'sha1': Header.SHA1,
+        'md5': Header.MD5,
+    }
 
 HASH_NAME_TO_FUNCTION = {
     'sha1': hashlib.sha1,

@@ -1,5 +1,6 @@
 import os
 import socket
+import sys
 import time
 import uuid as uuidlib
 import collections
@@ -18,23 +19,24 @@ def _set_field_type_and_return_list(field, value):
     Set the type on the protobuf field and return the resulting list.
 
     """
+    _3 = (2 < sys.version_info.major)
     if value is None:
         raise ValueError("None is not allowed for field values.  [%s]" % field.name)
 
     elif isinstance(value, int):
-        field.value_type = Field.INTEGER
+        field.value_type = Field.DESCRIPTOR.enum_values_by_name['INTEGER'] if _3 else Field.INTEGER
         field_list = field.value_integer
 
     elif isinstance(value, float):
-        field.value_type = Field.DOUBLE
+        field.value_type = Field.DESCRIPTOR.enum_values_by_name['DOUBLE'] if _3 else Field.DOUBLE
         field_list = field.value_double
 
     elif isinstance(value, bool):
-        field.value_type = Field.BOOL
+        field.value_type = Field.DESCRIPTOR.enum_values_by_name['BOOL'] if _3 else Field.BOOL
         field_list = field.value_bool
 
     elif isinstance(value, basestring):
-        field.value_type = Field.STRING
+        field.value_type = Field.DESCRIPTOR.enum_values_by_name['STRING'] if _3 else Field.STRING
         field_list = field.value_string
 
     else:
@@ -78,12 +80,20 @@ def _flatten_fields(msg, field_map, prefix=None):
             field_list.append(v)
 
 
-_FIELD_TYPE_TO_ATTRIBUTE = {
-    Field.INTEGER: 'value_integer',
-    Field.DOUBLE: 'value_double',
-    Field.BOOL: 'value_bool',
-    Field.STRING: 'value_string',
-}
+if 2 < sys.version_info.major:
+    _FIELD_TYPE_TO_ATTRIBUTE = {
+        Field.DESCRIPTOR.enum_values_by_name['INTEGER']: 'value_integer',
+        Field.DESCRIPTOR.enum_values_by_name['DOUBLE']: 'value_double',
+        Field.DESCRIPTOR.enum_values_by_name['BOOL']: 'value_bool',
+        Field.DESCRIPTOR.enum_values_by_name['STRING']: 'value_string',
+    }
+else:
+    _FIELD_TYPE_TO_ATTRIBUTE = {
+        Field.INTEGER: 'value_integer',
+        Field.DOUBLE: 'value_double',
+        Field.BOOL: 'value_bool',
+        Field.STRING: 'value_string',
+    }
 
 
 def _get_value_from_field(field):
