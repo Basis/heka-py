@@ -2,7 +2,7 @@ import hmac
 import hashlib
 from collections import namedtuple
 
-from message_pb2 import Header
+from .message_pb2 import Header
 
 
 SignerConfig = namedtuple('Signer', ('name', 'version', 'key', 'hash'))

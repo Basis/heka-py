@@ -1,6 +1,6 @@
 import struct
 
-from message_pb2 import Header
+from .message_pb2 import Header
 
 from . import signing
 
